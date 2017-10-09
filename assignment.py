@@ -1,5 +1,9 @@
 #!/usr/bin/evn python
-
+#   Assignment 10/10/17 Cognitive Systems
+#   Team members (alphabetical order):
+#   Mauro Comi, Eva Gil San Antonio,
+#   Carlos Lopez Gomez, Giorgio Ruffa, Yirui Wang
+#
 import csv
 
 def inches_to_meter(x):
