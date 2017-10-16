@@ -48,7 +48,7 @@ def sanitize_height(x):
 
 #clear the weight field, including interpretation of the possible unit of measure
 #will return either a float expressed in kilograms or None
-def sanitize_weight(x):
+def sanitize_weight(x, age):
     sanitized_weight = x
     #assume default in kg
     sanitized_weight = sanitized_weight.replace('kg','')
@@ -67,7 +67,19 @@ def sanitize_weight(x):
     except:
         return None
     #check if the range is more complicated because is 0.45
-    is_in_pounds = True if weight > 180 else is_in_pounds
+    #
+    is_in_pounds = True if weight > 200 else is_in_pounds
+
+    #check for reasonable ranges using age
+    #age is never null
+    #As a rule of thumb we assume a liner relationship within age and weight
+    #to draw the maximum reasonable weight in kilos for a given age
+    #the formula is : max_kg_value = 7.76 * age + 6
+    #6 is the maximum kg weight of a newborn (age=0)
+    #7.76 is the slope of the line if a 25 year old man had a maximum weight of 200 kg
+    if not is_in_pounds :
+        is_in_pounds = True if weight > (7.76 * age + 6 )  else False
+
 
     #convert if needed
     weight = pounds_to_kilos(weight) if is_in_pounds else weight
@@ -98,7 +110,7 @@ with open("infile.csv",'r') as infile, open("outfile.csv",'w') as outfile:
     for line in csvreader:
         #clean and convert
         line['height'] = sanitize_height(line['height'])
-        line['weight'] = sanitize_weight(line['weight'])
+        line['weight'] = sanitize_weight(line['weight'],int(line['age']))
         #categorize age
         age_boundaries = [26, 36, 56, 56, 66, 76]
         line["age_class"] = categorize(int(line['age']), age_boundaries)
